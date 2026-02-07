@@ -1,0 +1,79 @@
+####################################
+# OS / Editor
+####################################
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+*.swp
+*.swo
+
+####################################
+# ENV / Secrets
+####################################
+.env
+.env.*
+!.env.example
+
+####################################
+# Laravel Server
+####################################
+/server/vendor/
+/server/node_modules/
+/server/public/storage
+/server/storage/*.key
+/server/storage/logs/
+/server/storage/framework/cache/
+/server/storage/framework/sessions/
+/server/storage/framework/views/
+/server/bootstrap/cache/
+
+####################################
+# Laravel Vite / Mix
+####################################
+/server/public/build/
+/server/public/hot
+
+####################################
+# Flutter Client
+####################################
+/client/.dart_tool/
+/client/.flutter-plugins
+/client/.flutter-plugins-dependencies
+/client/.packages
+/client/.pub-cache/
+/client/build/
+/client/ios/Pods/
+/client/ios/.symlinks/
+/client/ios/Flutter/Flutter.framework
+/client/ios/Flutter/Flutter.podspec
+/client/ios/Flutter/App.framework
+/client/ios/Flutter/engine
+/client/ios/Flutter/Generated.xcconfig
+/client/ios/Flutter/flutter_export_environment.sh
+/client/android/.gradle/
+/client/android/app/build/
+/client/android/local.properties
+/client/android/key.properties
+/client/android/.idea/
+
+####################################
+# Firebase / API Keys
+####################################
+**/google-services.json
+**/GoogleService-Info.plist
+
+####################################
+# Reports / Coverage
+####################################
+coverage/
+*.lcov
+
+####################################
+# Temporary
+####################################
+*.tmp
+*.bak
+*.old
+*.cache
