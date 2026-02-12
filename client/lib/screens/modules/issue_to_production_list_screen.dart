@@ -163,6 +163,14 @@ class _IssueCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
+                      'ITP-${issue.issueId}',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
                       issue.finishedProductName,
                       style: const TextStyle(
                         fontSize: 16,

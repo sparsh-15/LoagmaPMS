@@ -201,7 +201,7 @@ class _BomHeaderCard extends StatelessWidget {
           const SizedBox(height: 12),
           _InfoRow(
             label: 'BOM ID',
-            value: '#${bom['bom_id']}',
+            value: 'BOM-${bom['bom_id']}',
             icon: Icons.numbers,
           ),
           if (bom['remarks'] != null &&
@@ -348,7 +348,7 @@ class _RawMaterialItem extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Material ${index + 1}',
+                  'BIP-${item['bom_item_id'] ?? (index + 1)}',
                   style: const TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,

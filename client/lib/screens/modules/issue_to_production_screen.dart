@@ -314,7 +314,17 @@ class _IssueMaterialRow extends StatelessWidget {
                   )
                   .toList(),
               controller: controller,
-              onChanged: (product) => row.rawMaterial.value = product,
+              onChanged: (product) {
+                row.rawMaterial.value = product;
+                final unit = product?.defaultUnit?.toString();
+                if (unit != null && unit.isNotEmpty) {
+                  row.unitType.value = controller.unitTypes.contains(unit)
+                      ? unit
+                      : (controller.unitTypes.isNotEmpty
+                          ? controller.unitTypes.first
+                          : 'KG');
+                }
+              },
               validator: (value) {
                 if (value == null) {
                   return 'Please select raw material';
@@ -357,29 +367,26 @@ class _IssueMaterialRow extends StatelessWidget {
                 flex: 1,
                 child: Obx(
                   () => DropdownButtonFormField<String>(
-                    value: row.unitType.value,
+                    value: controller.unitTypes.contains(row.unitType.value)
+                        ? row.unitType.value
+                        : (controller.unitTypes.isNotEmpty
+                            ? controller.unitTypes.first
+                            : 'KG'),
                     decoration: AppInputDecoration.standard(
                       labelText: 'Unit *',
                     ),
                     isDense: true,
-                    items: const [
-                      DropdownMenuItem(
-                        value: 'KG',
-                        child: Text('KG', style: TextStyle(fontSize: 13)),
-                      ),
-                      DropdownMenuItem(
-                        value: 'PCS',
-                        child: Text('PCS', style: TextStyle(fontSize: 13)),
-                      ),
-                      DropdownMenuItem(
-                        value: 'LTR',
-                        child: Text('LTR', style: TextStyle(fontSize: 13)),
-                      ),
-                      DropdownMenuItem(
-                        value: 'MTR',
-                        child: Text('MTR', style: TextStyle(fontSize: 13)),
-                      ),
-                    ],
+                    items: controller.unitTypes
+                        .map(
+                          (unit) => DropdownMenuItem(
+                            value: unit,
+                            child: Text(
+                              unit,
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                        )
+                        .toList(),
                     onChanged: (value) {
                       if (value != null) row.unitType.value = value;
                     },

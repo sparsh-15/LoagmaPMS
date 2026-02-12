@@ -296,6 +296,11 @@ class _IssueToProductionDetailsScreenState
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          _InfoRow(
+                            label: 'Issue ID',
+                            value: 'ITP-${widget.issueId}',
+                          ),
+                          const SizedBox(height: 12),
                           if (issueData?['remarks'] != null &&
                               issueData!['remarks'].toString().isNotEmpty)
                             _InfoRow(

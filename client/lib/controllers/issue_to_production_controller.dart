@@ -23,6 +23,7 @@ class IssueToProductionController extends GetxController {
 
   // Products data
   final products = <Product>[].obs;
+  final unitTypes = <String>[].obs;
 
   // Loading states
   final isLoading = false.obs;
@@ -34,6 +35,7 @@ class IssueToProductionController extends GetxController {
   void onInit() {
     super.onInit();
     _loadProducts();
+    _loadUnitTypes();
 
     // If editing, load issue data
     if (issueId != null) {
@@ -133,6 +135,25 @@ class IssueToProductionController extends GetxController {
       _showError('Failed to load products: $e');
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  Future<void> _loadUnitTypes() async {
+    try {
+      final response = await http.get(
+        Uri.parse(ApiConfig.unitTypes),
+        headers: {'Accept': 'application/json'},
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body) as Map<String, dynamic>;
+        if (data['success'] == true) {
+          final List types = data['data'] ?? [];
+          unitTypes.value = types.cast<String>();
+        }
+      }
+    } catch (e) {
+      debugPrint('[ISSUE] Unit types fallback: $e');
+      unitTypes.value = ['KG', 'PCS', 'LTR', 'MTR', 'GM', 'ML'];
     }
   }
 

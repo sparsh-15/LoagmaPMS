@@ -333,7 +333,15 @@ class _RawMaterialRow extends StatelessWidget {
                   ? null
                   : (product) {
                       row.rawMaterial.value = product;
-                      // No auto-select unit for now - keep it simple
+                      final unit = product?['inventory_unit_type']?.toString();
+                      if (unit != null && unit.isNotEmpty) {
+                        row.unitType.value = controller.unitTypes
+                                .contains(unit)
+                            ? unit
+                            : (controller.unitTypes.isNotEmpty
+                                ? controller.unitTypes.first
+                                : 'KG');
+                      }
                     },
               validator: (value) {
                 if (value == null) {

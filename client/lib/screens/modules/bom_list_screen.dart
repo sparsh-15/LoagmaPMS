@@ -170,7 +170,9 @@ class _BomCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'BOM ${bom.bomVersion}',
+                          bom.bomId != null
+                              ? 'BOM-${bom.bomId} • ${bom.bomVersion}'
+                              : 'BOM ${bom.bomVersion}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -178,13 +180,14 @@ class _BomCard extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(height: 2),
-                        Text(
-                          'ID: #${bom.bomId ?? 'N/A'}',
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: AppColors.textMuted,
+                        if (bom.bomId != null)
+                          Text(
+                            'ID: BOM-${bom.bomId}',
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: AppColors.textMuted,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
