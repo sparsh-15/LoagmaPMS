@@ -6,6 +6,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BomController;
 use App\Http\Controllers\IssueToProductionController;
 use App\Http\Controllers\ReceiveFromProductionController;
+use App\Http\Controllers\StockVoucherController;
 
 Route::get('/health', [HealthController::class, 'index']);
 Route::get('/products', [ProductController::class, 'index']);
@@ -28,3 +29,9 @@ Route::get('/receives', [ReceiveFromProductionController::class, 'index']);
 Route::post('/receives', [ReceiveFromProductionController::class, 'store']);
 Route::get('/receives/{id}', [ReceiveFromProductionController::class, 'show']);
 Route::put('/receives/{id}', [ReceiveFromProductionController::class, 'update']);
+
+// Stock Voucher routes
+Route::get('/stock-vouchers', [StockVoucherController::class, 'index']);
+Route::post('/stock-vouchers', [StockVoucherController::class, 'store']);
+Route::get('/stock-vouchers/{id}', [StockVoucherController::class, 'show']);
+Route::put('/stock-vouchers/{id}', [StockVoucherController::class, 'update']);

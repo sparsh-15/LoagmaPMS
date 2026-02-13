@@ -166,6 +166,14 @@ class DashboardScreen extends StatelessWidget {
                     Get.toNamed(AppRoutes.bom);
                   },
                 ),
+                _ModuleCard(
+                  title: 'Stock Voucher',
+                  subtitle: 'Record stock IN or OUT',
+                  icon: Icons.receipt_long_outlined,
+                  onTap: () {
+                    Get.toNamed(AppRoutes.stockVoucher);
+                  },
+                ),
               ];
 
               return Padding(
@@ -301,6 +309,14 @@ class _DashboardDrawer extends StatelessWidget {
                     onTap: () {
                       Navigator.of(context).pop();
                       Get.toNamed(AppRoutes.bom);
+                    },
+                  ),
+                  _DrawerItem(
+                    icon: Icons.receipt_long_outlined,
+                    label: 'Stock Voucher',
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Get.toNamed(AppRoutes.stockVoucher);
                     },
                   ),
                 ],

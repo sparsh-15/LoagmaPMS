@@ -63,5 +63,11 @@ class ApiConfig {
 
   /// POST ${ApiConfig.apiBaseUrl}/receives
   static String get createReceive => '$apiBaseUrl/receives';
+
+  /// GET ${ApiConfig.apiBaseUrl}/stock-vouchers
+  static String get stockVouchers => '$apiBaseUrl/stock-vouchers';
+
+  /// POST ${ApiConfig.apiBaseUrl}/stock-vouchers
+  static String get createStockVoucher => '$apiBaseUrl/stock-vouchers';
 }
 

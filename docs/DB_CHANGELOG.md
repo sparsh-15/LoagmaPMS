@@ -55,3 +55,25 @@ cd server && php artisan migrate
 |-------|-------------|
 | `receive_from_production` | Master record (status, remarks, received_at) |
 | `receive_from_production_items` | Line items (finished_product_id, quantity, unit_type) |
+
+---
+
+## 2025-02-13 – Stock Voucher
+
+### Summary
+Stock voucher module for recording stock IN and stock OUT with multiple items.
+
+### Migration
+**File:** `server/database/migrations/2025_02_13_000002_create_stock_voucher_tables.php`
+
+**Run:**
+```bash
+cd server && php artisan migrate
+```
+
+### New Tables
+
+| Table | Description |
+|-------|-------------|
+| `stock_voucher` | Master (voucher_type IN/OUT, status, voucher_date, remarks) |
+| `stock_voucher_items` | Line items (product_id, quantity, unit_type) |
