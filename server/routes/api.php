@@ -5,6 +5,7 @@ use App\Http\Controllers\HealthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\BomController;
 use App\Http\Controllers\IssueToProductionController;
+use App\Http\Controllers\ReceiveFromProductionController;
 
 Route::get('/health', [HealthController::class, 'index']);
 Route::get('/products', [ProductController::class, 'index']);
@@ -21,3 +22,9 @@ Route::get('/issues', [IssueToProductionController::class, 'index']);
 Route::post('/issues', [IssueToProductionController::class, 'store']);
 Route::get('/issues/{id}', [IssueToProductionController::class, 'show']);
 Route::put('/issues/{id}', [IssueToProductionController::class, 'update']);
+
+// Receive from Production routes
+Route::get('/receives', [ReceiveFromProductionController::class, 'index']);
+Route::post('/receives', [ReceiveFromProductionController::class, 'store']);
+Route::get('/receives/{id}', [ReceiveFromProductionController::class, 'show']);
+Route::put('/receives/{id}', [ReceiveFromProductionController::class, 'update']);

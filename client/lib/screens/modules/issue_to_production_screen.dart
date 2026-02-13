@@ -28,7 +28,7 @@ class IssueToProductionScreen extends StatelessWidget {
             onPressed: () {
               Get.snackbar(
                 'Help',
-                'Select finished product, quantity to produce and materials to issue based on BOM.',
+                'Add raw materials to issue to production.',
                 snackPosition: SnackPosition.BOTTOM,
               );
             },
@@ -73,9 +73,9 @@ class IssueToProductionScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
-                              _IssueHeaderCard(controller: controller),
-                              const SizedBox(height: 16),
                               _IssueMaterialsCard(controller: controller),
+                              const SizedBox(height: 16),
+                              _IssueRemarksCard(controller: controller),
                             ],
                           ),
                         ),
@@ -121,76 +121,6 @@ class IssueToProductionScreen extends StatelessWidget {
   }
 }
 
-class _IssueHeaderCard extends StatelessWidget {
-  final IssueToProductionController controller;
-
-  const _IssueHeaderCard({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return ContentCard(
-      title: 'Production Details',
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Obx(
-            () => _ProductDropdown(
-              key: const ValueKey('finished_product_dropdown'),
-              label: 'Finished Product *',
-              initialValue: controller.finishedProduct.value,
-              items: controller.products,
-              controller: controller,
-              onChanged: (product) => controller.setFinishedProduct(product),
-              validator: (value) {
-                if (value == null) {
-                  return 'Please select a finished product';
-                }
-                return null;
-              },
-            ),
-          ),
-          const SizedBox(height: 16),
-          Obx(
-            () => TextFormField(
-              initialValue: controller.quantityToProduce.value,
-              decoration: AppInputDecoration.standard(
-                labelText: 'Quantity to Produce *',
-                hintText: 'e.g., 100.0',
-              ),
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              validator: (value) {
-                if (value == null || value.trim().isEmpty) {
-                  return 'Please enter quantity';
-                }
-                final parsed = double.tryParse(value);
-                if (parsed == null || parsed <= 0) {
-                  return 'Must be greater than 0';
-                }
-                return null;
-              },
-              onChanged: controller.setQuantityToProduce,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Obx(
-            () => TextFormField(
-              initialValue: controller.remarks.value,
-              decoration: AppInputDecoration.standard(
-                labelText: 'Remarks',
-                hintText: 'Optional notes...',
-              ),
-              maxLines: 3,
-              onChanged: controller.setRemarks,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class _IssueMaterialsCard extends StatelessWidget {
   final IssueToProductionController controller;
 
@@ -199,7 +129,7 @@ class _IssueMaterialsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ContentCard(
-      title: 'Materials to Issue',
+      title: 'Raw Materials to Issue',
       child: Obx(() {
         if (controller.materials.isEmpty) {
           return EmptyState(
@@ -230,13 +160,37 @@ class _IssueMaterialsCard extends StatelessWidget {
               child: TextButton.icon(
                 onPressed: () => controller.addMaterialRow(),
                 icon: const Icon(Icons.add_rounded, size: 20),
-                label: const Text('Add Material'),
+                label: const Text('Add Raw Material'),
                 style: TextButton.styleFrom(foregroundColor: AppColors.primary),
               ),
             ),
           ],
         );
       }),
+    );
+  }
+}
+
+class _IssueRemarksCard extends StatelessWidget {
+  final IssueToProductionController controller;
+
+  const _IssueRemarksCard({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
+    return ContentCard(
+      title: 'Remarks',
+      child: Obx(
+        () => TextFormField(
+          initialValue: controller.remarks.value,
+          decoration: AppInputDecoration.standard(
+            labelText: 'Remarks',
+            hintText: 'Optional notes...',
+          ),
+          maxLines: 3,
+          onChanged: controller.setRemarks,
+        ),
+      ),
     );
   }
 }
@@ -306,13 +260,7 @@ class _IssueMaterialRow extends StatelessWidget {
               key: ValueKey('raw_material_dropdown_$index'),
               label: 'Raw Material *',
               initialValue: row.rawMaterial.value,
-              items: controller.products
-                  .where(
-                    (p) =>
-                        controller.finishedProduct.value == null ||
-                        p.id != controller.finishedProduct.value!.id,
-                  )
-                  .toList(),
+              items: controller.products,
               controller: controller,
               onChanged: (product) {
                 row.rawMaterial.value = product;

@@ -23,6 +23,18 @@ class ProductController extends Controller
                 ->whereNotNull('name')
                 ->whereRaw("TRIM(name) != ''");
 
+            // Filter by role: raw_material (in BOM items) or finished (in BOM master)
+            $forType = trim((string) request()->query('for', ''));
+            if ($forType === 'raw_material') {
+                $query->whereIn('product_id', function ($q) {
+                    $q->select('raw_material_id')->from('bom_items')->distinct();
+                });
+            } elseif ($forType === 'finished') {
+                $query->whereIn('product_id', function ($q) {
+                    $q->select('product_id')->from('bom_master')->distinct();
+                });
+            }
+
             if (!empty(trim($search))) {
                 $term = trim($search);
                 $query->where(function ($q) use ($term) {

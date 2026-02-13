@@ -1,35 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../controllers/issue_to_production_list_controller.dart';
+import '../../controllers/receive_from_production_list_controller.dart';
 import '../../theme/app_colors.dart';
 import '../../widgets/common_widgets.dart';
-import 'issue_to_production_details_screen.dart';
-import 'issue_to_production_screen.dart';
+import 'receive_from_production_details_screen.dart';
+import 'receive_from_production_screen.dart';
 
-class IssueToProductionListScreen extends StatelessWidget {
-  const IssueToProductionListScreen({super.key});
+class ReceiveFromProductionListScreen extends StatelessWidget {
+  const ReceiveFromProductionListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(IssueToProductionListController());
+    final controller = Get.put(ReceiveFromProductionListController());
 
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: ModuleAppBar(
-        title: 'Issue to Production',
+        title: 'Receive from Production',
         subtitle: 'Loagma',
         onBackPressed: () => Get.back(),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
-            onPressed: controller.fetchIssues,
+            onPressed: controller.fetchReceives,
             tooltip: 'Refresh',
           ),
         ],
       ),
       body: Obx(() {
-        if (controller.isLoading.value && controller.issues.isEmpty) {
+        if (controller.isLoading.value && controller.receives.isEmpty) {
           return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -39,7 +39,7 @@ class IssueToProductionListScreen extends StatelessWidget {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Loading issues...',
+                  'Loading receives...',
                   style: TextStyle(color: AppColors.textMuted, fontSize: 14),
                 ),
               ],
@@ -47,9 +47,9 @@ class IssueToProductionListScreen extends StatelessWidget {
           );
         }
 
-        if (controller.issues.isEmpty) {
+        if (controller.receives.isEmpty) {
           return RefreshIndicator(
-            onRefresh: controller.fetchIssues,
+            onRefresh: controller.fetchReceives,
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               child: SizedBox(
@@ -58,15 +58,15 @@ class IssueToProductionListScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(16),
                   child: ContentCard(
                     child: EmptyState(
-                      icon: Icons.outbox_rounded,
-                      message: 'No issues to production created yet.',
-                      actionLabel: 'Create Issue',
+                      icon: Icons.inventory_2_outlined,
+                      message: 'No receives from production yet.',
+                      actionLabel: 'Add Receive',
                       onAction: () async {
                         final result = await Get.to(
-                          () => const IssueToProductionScreen(),
+                          () => const ReceiveFromProductionScreen(),
                         );
                         if (result == true) {
-                          controller.fetchIssues();
+                          controller.fetchReceives();
                         }
                       },
                     ),
@@ -78,21 +78,22 @@ class IssueToProductionListScreen extends StatelessWidget {
         }
 
         return RefreshIndicator(
-          onRefresh: controller.fetchIssues,
+          onRefresh: controller.fetchReceives,
           child: ListView.builder(
             padding: const EdgeInsets.all(16),
-            itemCount: controller.issues.length,
+            itemCount: controller.receives.length,
             itemBuilder: (context, index) {
-              final issue = controller.issues[index];
-              return _IssueCard(
-                issue: issue,
+              final receive = controller.receives[index];
+              return _ReceiveCard(
+                receive: receive,
                 onTap: () async {
                   final result = await Get.to(
-                    () =>
-                        IssueToProductionDetailsScreen(issueId: issue.issueId),
+                    () => ReceiveFromProductionDetailsScreen(
+                      receiveId: receive.receiveId,
+                    ),
                   );
                   if (result == true) {
-                    controller.fetchIssues();
+                    controller.fetchReceives();
                   }
                 },
               );
@@ -102,9 +103,11 @@ class IssueToProductionListScreen extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          final result = await Get.to(() => const IssueToProductionScreen());
+          final result = await Get.to(
+            () => const ReceiveFromProductionScreen(),
+          );
           if (result == true) {
-            controller.fetchIssues();
+            controller.fetchReceives();
           }
         },
         backgroundColor: AppColors.primary,
@@ -115,22 +118,18 @@ class IssueToProductionListScreen extends StatelessWidget {
   }
 }
 
-class _IssueCard extends StatelessWidget {
-  final IssueToProductionSummary issue;
+class _ReceiveCard extends StatelessWidget {
+  final ReceiveFromProductionSummary receive;
   final VoidCallback onTap;
 
-  const _IssueCard({required this.issue, required this.onTap});
+  const _ReceiveCard({required this.receive, required this.onTap});
 
   Color _getStatusColor() {
-    switch (issue.status) {
+    switch (receive.status) {
       case 'DRAFT':
         return Colors.blue;
-      case 'ISSUED':
+      case 'RECEIVED':
         return Colors.green;
-      case 'COMPLETED':
-        return Colors.teal;
-      case 'CANCELLED':
-        return Colors.red;
       default:
         return Colors.grey;
     }
@@ -163,7 +162,7 @@ class _IssueCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'ITP-${issue.issueId}',
+                      'RFP-${receive.receiveId}',
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textMuted,
@@ -171,9 +170,9 @@ class _IssueCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      issue.materialsPreview.isNotEmpty
-                          ? issue.materialsPreview
-                          : '${issue.materialsCount} raw material(s)',
+                      receive.itemsPreview.isNotEmpty
+                          ? receive.itemsPreview
+                          : '${receive.itemsCount} item(s)',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -195,7 +194,7 @@ class _IssueCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            issue.status,
+                            receive.status,
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
@@ -211,7 +210,7 @@ class _IssueCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          issue.date,
+                          receive.date,
                           style: const TextStyle(
                             fontSize: 13,
                             color: AppColors.textMuted,

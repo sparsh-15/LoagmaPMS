@@ -13,25 +13,37 @@ class IssueToProductionController extends Controller
     public function index(): JsonResponse
     {
         try {
-            $issues = DB::table('issue_to_production as itp')
-                ->join('product as p', 'itp.finished_product_id', '=', 'p.product_id')
+            $issues = DB::table('issue_to_production')
                 ->select(
-                    'itp.issue_id',
-                    'itp.finished_product_id',
-                    'p.name as finished_product_name',
-                    'itp.quantity_to_produce',
-                    'itp.status',
-                    'itp.remarks',
-                    'itp.issued_at',
-                    'itp.created_at',
-                    'itp.updated_at'
+                    'issue_id',
+                    'status',
+                    'remarks',
+                    'issued_at',
+                    'created_at',
+                    'updated_at'
                 )
-                ->orderBy('itp.created_at', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->get();
+
+            // Add materials summary for each issue
+            $result = $issues->map(function ($issue) {
+                $items = DB::table('issue_to_production_items as itpi')
+                    ->join('product as p', 'itpi.raw_material_id', '=', 'p.product_id')
+                    ->where('itpi.issue_id', $issue->issue_id)
+                    ->select('p.name')
+                    ->limit(3)
+                    ->pluck('name');
+                $count = DB::table('issue_to_production_items')
+                    ->where('issue_id', $issue->issue_id)
+                    ->count();
+                $issue->materials_count = $count;
+                $issue->materials_preview = $items->implode(', ');
+                return $issue;
+            });
 
             return response()->json([
                 'success' => true,
-                'data' => $issues
+                'data' => $result
             ]);
 
         } catch (\Exception $e) {
@@ -48,19 +60,15 @@ class IssueToProductionController extends Controller
     public function show($id): JsonResponse
     {
         try {
-            $issue = DB::table('issue_to_production as itp')
-                ->join('product as p', 'itp.finished_product_id', '=', 'p.product_id')
-                ->where('itp.issue_id', $id)
+            $issue = DB::table('issue_to_production')
+                ->where('issue_id', $id)
                 ->select(
-                    'itp.issue_id',
-                    'itp.finished_product_id',
-                    'p.name as finished_product_name',
-                    'itp.quantity_to_produce',
-                    'itp.status',
-                    'itp.remarks',
-                    'itp.issued_at',
-                    'itp.created_at',
-                    'itp.updated_at'
+                    'issue_id',
+                    'status',
+                    'remarks',
+                    'issued_at',
+                    'created_at',
+                    'updated_at'
                 )
                 ->first();
 
@@ -107,8 +115,6 @@ class IssueToProductionController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'finished_product_id' => 'required|integer|exists:product,product_id',
-                'quantity_to_produce' => 'required|numeric|min:0.001',
                 'status' => 'required|in:DRAFT,ISSUED',
                 'remarks' => 'nullable|string',
                 'materials' => 'required|array|min:1',
@@ -127,10 +133,8 @@ class IssueToProductionController extends Controller
 
             DB::beginTransaction();
 
-            // Insert issue master
+            // Insert issue master (raw materials only)
             $issueId = DB::table('issue_to_production')->insertGetId([
-                'finished_product_id' => $request->finished_product_id,
-                'quantity_to_produce' => $request->quantity_to_produce,
                 'status' => $request->status,
                 'remarks' => $request->remarks,
                 'issued_at' => $request->status === 'ISSUED' ? now() : null,
@@ -188,8 +192,6 @@ class IssueToProductionController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'finished_product_id' => 'required|integer|exists:product,product_id',
-                'quantity_to_produce' => 'required|numeric|min:0.001',
                 'status' => 'required|in:DRAFT,ISSUED',
                 'remarks' => 'nullable|string',
                 'materials' => 'required|array|min:1',
@@ -218,16 +220,14 @@ class IssueToProductionController extends Controller
                 ], 404);
             }
 
-            // Update issue master
+            // Update issue master (raw materials only)
             DB::table('issue_to_production')
                 ->where('issue_id', $id)
                 ->update([
-                    'finished_product_id' => $request->finished_product_id,
-                    'quantity_to_produce' => $request->quantity_to_produce,
                     'status' => $request->status,
                     'remarks' => $request->remarks,
-                    'issued_at' => $request->status === 'ISSUED' && !$existingIssue->issued_at 
-                        ? now() 
+                    'issued_at' => $request->status === 'ISSUED' && !$existingIssue->issued_at
+                        ? now()
                         : $existingIssue->issued_at,
                     'updated_at' => now(),
                 ]);

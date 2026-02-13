@@ -182,28 +182,6 @@ class _IssueToProductionDetailsScreenState
                     ),
                     const SizedBox(height: 16),
 
-                    // Finished Product Info
-                    ContentCard(
-                      title: 'Finished Product',
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _InfoRow(
-                            label: 'Product',
-                            value: issueData?['finished_product_name'] ?? 'N/A',
-                          ),
-                          const SizedBox(height: 12),
-                          _InfoRow(
-                            label: 'Quantity to Produce',
-                            value:
-                                issueData?['quantity_to_produce']?.toString() ??
-                                'N/A',
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-
                     // Materials List
                     ContentCard(
                       title: 'Raw Materials',

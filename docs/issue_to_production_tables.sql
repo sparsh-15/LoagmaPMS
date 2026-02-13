@@ -1,10 +1,8 @@
 -- Issue to Production Tables
+-- Issue to Production: Raw materials only (no finished product link)
 
 CREATE TABLE IF NOT EXISTS issue_to_production (
     issue_id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    
-    finished_product_id BIGINT UNSIGNED NOT NULL,
-    quantity_to_produce DECIMAL(10,3) NOT NULL,
     
     status ENUM('DRAFT', 'ISSUED', 'COMPLETED', 'CANCELLED') DEFAULT 'DRAFT',
     
@@ -14,10 +12,7 @@ CREATE TABLE IF NOT EXISTS issue_to_production (
     issued_at DATETIME,
     
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    
-    CONSTRAINT fk_issue_finished_product
-        FOREIGN KEY (finished_product_id) REFERENCES product(product_id)
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS issue_to_production_items (
@@ -42,4 +37,3 @@ CREATE TABLE IF NOT EXISTS issue_to_production_items (
 -- Indexes for better performance
 CREATE INDEX idx_issue_status ON issue_to_production(status);
 CREATE INDEX idx_issue_created ON issue_to_production(created_at);
-CREATE INDEX idx_issue_finished_product ON issue_to_production(finished_product_id);

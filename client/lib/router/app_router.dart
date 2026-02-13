@@ -5,7 +5,7 @@ import '../screens/auth/login_screen.dart';
 import '../screens/auth/otp_screen.dart';
 import '../screens/modules/bom_list_screen.dart';
 import '../screens/modules/issue_to_production_list_screen.dart';
-import '../screens/modules/receive_from_production_screen.dart';
+import '../screens/modules/receive_from_production_list_screen.dart';
 
 /// Central route names. Use these instead of raw strings.
 abstract class AppRoutes {
@@ -39,7 +39,7 @@ final List<GetPage<dynamic>> appPages = [
   ),
   GetPage(
     name: AppRoutes.receiveFromProduction,
-    page: () => const ReceiveFromProductionScreen(),
+    page: () => const ReceiveFromProductionListScreen(),
   ),
   GetPage(
     name: AppRoutes.bom,

@@ -7,77 +7,73 @@ import 'package:intl/intl.dart';
 
 import '../api_config.dart';
 
-class IssueToProductionSummary {
-  final int issueId;
-  final int materialsCount;
-  final String materialsPreview;
+class ReceiveFromProductionSummary {
+  final int receiveId;
+  final int itemsCount;
+  final String itemsPreview;
   final String status;
   final String date;
 
-  IssueToProductionSummary({
-    required this.issueId,
-    required this.materialsCount,
-    required this.materialsPreview,
+  ReceiveFromProductionSummary({
+    required this.receiveId,
+    required this.itemsCount,
+    required this.itemsPreview,
     required this.status,
     required this.date,
   });
 }
 
-class IssueToProductionListController extends GetxController {
-  final issues = <IssueToProductionSummary>[].obs;
+class ReceiveFromProductionListController extends GetxController {
+  final receives = <ReceiveFromProductionSummary>[].obs;
   final isLoading = false.obs;
 
   @override
   void onInit() {
     super.onInit();
-    fetchIssues();
+    fetchReceives();
   }
 
-  Future<void> fetchIssues() async {
+  Future<void> fetchReceives() async {
     try {
       isLoading.value = true;
 
       final response = await http
           .get(
-            Uri.parse(ApiConfig.issues),
+            Uri.parse(ApiConfig.receives),
             headers: {'Accept': 'application/json'},
           )
           .timeout(const Duration(seconds: 30));
-
-      debugPrint('[ISSUE_LIST] Response status: ${response.statusCode}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
 
         if (data['success'] == true) {
-          final List issuesData = data['data'] ?? [];
-          debugPrint('[ISSUE_LIST] ✅ Loaded ${issuesData.length} issues');
-
-          issues.value = issuesData.map((item) {
+          final List receivesData = data['data'] ?? [];
+          receives.value = receivesData.map((item) {
             final createdAt = item['created_at'] ?? '';
             final formattedDate = _formatDate(createdAt);
-            final count = item['materials_count'] ?? 0;
-            final preview = item['materials_preview'] ?? '';
+            final count = item['items_count'] ?? 0;
+            final preview = item['items_preview'] ?? '';
 
-            return IssueToProductionSummary(
-              issueId: item['issue_id'] ?? 0,
-              materialsCount: count is int ? count : 0,
-              materialsPreview: preview.toString(),
+            return ReceiveFromProductionSummary(
+              receiveId: item['id'] ?? 0,
+              itemsCount: count is int ? count : 0,
+              itemsPreview: preview.toString(),
               status: item['status'] ?? 'DRAFT',
               date: formattedDate,
             );
           }).toList();
         } else {
-          throw Exception(data['message'] ?? 'Failed to load issues');
+          throw Exception(data['message'] ?? 'Failed to load receives');
         }
       } else {
         throw Exception('Server error: ${response.statusCode}');
       }
     } catch (e) {
-      debugPrint('[ISSUE_LIST] ❌ Failed to fetch issues: $e');
+      debugPrint('[RECEIVE_LIST] Failed to fetch: $e');
       Get.snackbar(
         'Error',
-        'Failed to load issues: $e',
+        'Failed to load receives: $e',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.redAccent,
         colorText: Colors.white,

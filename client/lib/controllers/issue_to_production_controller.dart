@@ -14,8 +14,6 @@ class IssueToProductionController extends GetxController {
   final int? issueId; // null for create, non-null for edit
 
   // Header fields
-  final finishedProduct = Rxn<Product>();
-  final quantityToProduce = ''.obs;
   final remarks = ''.obs;
 
   // Materials to issue
@@ -61,16 +59,7 @@ class IssueToProductionController extends GetxController {
           final items = issueData['items'] as List;
 
           // Set issue master data
-          quantityToProduce.value =
-              issue['quantity_to_produce']?.toString() ?? '';
           remarks.value = issue['remarks']?.toString() ?? '';
-
-          // Set finished product
-          finishedProduct.value = Product(
-            id: issue['finished_product_id'],
-            name: issue['finished_product_name'],
-            productType: 'FINISHED',
-          );
 
           // Set materials
           materials.clear();
@@ -183,14 +172,6 @@ class IssueToProductionController extends GetxController {
     }
   }
 
-  void setFinishedProduct(Product? product) {
-    finishedProduct.value = product;
-  }
-
-  void setQuantityToProduce(String value) {
-    quantityToProduce.value = value;
-  }
-
   void setRemarks(String value) {
     remarks.value = value;
   }
@@ -210,18 +191,6 @@ class IssueToProductionController extends GetxController {
       return false;
     }
 
-    if (finishedProduct.value == null) {
-      _showError('Please select finished product');
-      return false;
-    }
-
-    if (quantityToProduce.value.trim().isEmpty ||
-        double.tryParse(quantityToProduce.value) == null ||
-        double.parse(quantityToProduce.value) <= 0) {
-      _showError('Please enter valid quantity to produce');
-      return false;
-    }
-
     if (materials.isEmpty) {
       _showError('Please add at least one material to issue');
       return false;
@@ -236,8 +205,6 @@ class IssueToProductionController extends GetxController {
     isSaving.value = true;
     try {
       final issueData = {
-        'finished_product_id': finishedProduct.value!.id,
-        'quantity_to_produce': double.parse(quantityToProduce.value),
         'status': saveStatus,
         'remarks': remarks.value.trim(),
         'materials': materials.map((row) {
@@ -285,11 +252,9 @@ class IssueToProductionController extends GetxController {
             : (saveStatus == 'DRAFT'
                   ? 'Issue saved as draft'
                   : 'Materials issued successfully');
-        _showSuccess(message);
         debugPrint('[ISSUE] ✅ Success: ${data['data']}');
-
-        await Future.delayed(const Duration(seconds: 1));
         Get.back(result: true);
+        _showSuccess(message);
       } else {
         throw Exception(data['message'] ?? 'Failed to save issue');
       }
@@ -347,6 +312,7 @@ void _showSuccess(String message) {
     colorText: Colors.white,
     margin: const EdgeInsets.all(12),
     borderRadius: 8,
+    duration: const Duration(seconds: 2),
   );
 }
 

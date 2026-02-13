@@ -144,7 +144,7 @@ class DashboardScreen extends StatelessWidget {
               final modules = <_ModuleCard>[
                 _ModuleCard(
                   title: 'Issue to production',
-                  subtitle: 'Issue materials or items to production',
+                  subtitle: 'Issue raw materials to production',
                   icon: Icons.outbox_rounded,
                   onTap: () {
                     Get.toNamed(AppRoutes.issueToProduction);
@@ -152,7 +152,7 @@ class DashboardScreen extends StatelessWidget {
                 ),
                 _ModuleCard(
                   title: 'Receive from production',
-                  subtitle: 'Receive items or materials from production',
+                  subtitle: 'Receive finished goods from production',
                   icon: Icons.inbox_rounded,
                   onTap: () {
                     Get.toNamed(AppRoutes.receiveFromProduction);

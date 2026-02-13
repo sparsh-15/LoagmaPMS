@@ -57,4 +57,11 @@ class ApiConfig {
 
   /// POST ${ApiConfig.apiBaseUrl}/issues
   static String get createIssue => '$apiBaseUrl/issues';
+
+  /// GET ${ApiConfig.apiBaseUrl}/receives
+  static String get receives => '$apiBaseUrl/receives';
+
+  /// POST ${ApiConfig.apiBaseUrl}/receives
+  static String get createReceive => '$apiBaseUrl/receives';
 }
+
